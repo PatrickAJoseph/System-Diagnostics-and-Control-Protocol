@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value="FTOR"/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="FTOR"/>
+			<item value="ZLED"/>
+			<item value="PM_BTR_Rx_Handler"/>
+			<item value="PM_BTR_Tx_Handler"/>
+			<item value="FSM"/>
+			<item value="PM_BTR_Rx"/>
+			<item value="PM_BTR"/>
+			<item value="BTR_Tx"/>
+			<item value="SFT_ENSTAT"/>
+			<item value="UART.UART_parameters.DMA_Tx_completed"/>
+			<item value="UART.UART_parameter"/>
+			<item value="DMA."/>
+			<item value="SDCP_BTR"/>
+			<item value="IEEE"/>
+			<item value="BTR_Rx"/>
+		</list>
+		<list key="replacehistory">
+			<item value=""/>
+			<item value="Gz_filter"/>
+			<item value="Gy_filter"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="1534"/>
+		<item key="DIALOG_Y_ORIGIN" value="514"/>
+		<item key="DIALOG_WIDTH" value="385"/>
+		<item key="DIALOG_HEIGHT" value="523"/>
+		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-18|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+	</section>
+</section>

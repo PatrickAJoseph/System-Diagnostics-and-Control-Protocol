@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;SDCP_STM32_new_1/Core/Src/Configuration.c&apos; to &apos;Configurations.c&apos;" description="Rename resource &apos;Configuration.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Src/Configuration.c" name="Configurations.c" stamp="1712465589732" updateReferences="true"/>
+</session>

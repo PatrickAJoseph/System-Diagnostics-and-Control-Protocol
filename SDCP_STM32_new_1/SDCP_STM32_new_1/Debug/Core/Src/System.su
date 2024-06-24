@@ -1,0 +1,2 @@
+System.c:12:6:System_ClockInit	16	static
+System.c:87:6:System_SysTick_delay_ms	16	static

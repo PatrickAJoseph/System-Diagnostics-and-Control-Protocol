@@ -1,0 +1,621 @@
+
+#include "Protocol_Manager.h"
+
+#define PM_nFrames    28
+#define PM_nTransmitEvents 5
+
+uint8_t PM_SMF_Transmit_Buffer[ 6 * PM_nFrames ];
+uint8_t PM_SMF_Transmit_Counter[ PM_nTransmitEvents ];
+uint8_t PM_SMF_Transmit_Counter_Limit[ PM_nTransmitEvents ] = { 10,1,25,1,5 };
+uint32_t pSMFs[PM_nFrames];
+
+static uint8_t verifyChecksum(uint8_t* buffer)
+{
+  uint16_t checksum = 0;
+
+  checksum += (uint16_t)buffer[0];
+  checksum += (uint16_t)buffer[1];
+  checksum += (uint16_t)buffer[2];
+  checksum += (uint16_t)buffer[3];
+  checksum += (uint16_t)buffer[4];
+  checksum += (uint16_t)buffer[5];
+
+  return((uint8_t)((checksum%255) == 0));
+}
+
+static uint8_t obtainChecksum(uint8_t* buffer)
+{
+  uint16_t checksum = 0;
+
+  checksum += (uint16_t)buffer[0];
+  checksum += (uint16_t)buffer[1];
+  checksum += (uint16_t)buffer[2];
+  checksum += (uint16_t)buffer[3];
+  checksum += (uint16_t)buffer[4];
+  checksum = ( 255 - (checksum%255) );
+
+  return(checksum);
+}
+
+uint32_t PM_FIDs[PM_nFrames] = {
+
+  GUI_FID,
+  LED_CNTRL_FID,
+  IMU_X_Raw_FID,
+  IMU_Y_Raw_FID,
+  IMU_Z_Raw_FID,
+  IMU_Temp_FID,
+  IMU_XACCEL_Processed_FID,
+  IMU_YACCEL_Processed_FID,
+  IMU_ZACCEL_Processed_FID,
+  IMU_XGYRO_Processed_FID,
+  IMU_YGYRO_Processed_FID,
+  IMU_ZGYRO_Processed_FID,
+  Roll_FID,
+  Pitch_FID,
+  Yaw_FID,
+  CF_coeff_FID,
+  IMU_settings_FID,
+  IMU_CALIB_XACCEL_Offset_FID,
+  IMU_CALIB_YACCEL_Offset_FID,
+  IMU_CALIB_ZACCEL_Offset_FID,
+  IMU_CALIB_XGYRO_Offset_FID,
+  IMU_CALIB_YGYRO_Offset_FID,
+  IMU_CALIB_ZGYRO_Offset_FID,
+  IMU_CALIB_XGYRO_bias_drift_FID,
+  IMU_CALIB_YGYRO_bias_drift_FID,
+  IMU_CALIB_ZGYRO_bias_drift_FID,
+  Task_counter_FID
+
+};
+
+
+
+void PM_Init(){
+
+  pSMFs[0] = (uint32_t)&GUI_SMF;
+  pSMFs[1] = (uint32_t)&LED_CNTRL_SMF;
+  pSMFs[2] = (uint32_t)&IMU_X_Raw_SMF;
+  pSMFs[3] = (uint32_t)&IMU_Y_Raw_SMF;
+  pSMFs[4] = (uint32_t)&IMU_Z_Raw_SMF;
+  pSMFs[5] = (uint32_t)&IMU_Temp_SMF;
+  pSMFs[6] = (uint32_t)&IMU_XACCEL_Processed_SMF;
+  pSMFs[7] = (uint32_t)&IMU_YACCEL_Processed_SMF;
+  pSMFs[8] = (uint32_t)&IMU_ZACCEL_Processed_SMF;
+  pSMFs[9] = (uint32_t)&IMU_XGYRO_Processed_SMF;
+  pSMFs[10] = (uint32_t)&IMU_YGYRO_Processed_SMF;
+  pSMFs[11] = (uint32_t)&IMU_ZGYRO_Processed_SMF;
+  pSMFs[12] = (uint32_t)&Roll_SMF;
+  pSMFs[13] = (uint32_t)&Pitch_SMF;
+  pSMFs[14] = (uint32_t)&Yaw_SMF;
+  pSMFs[15] = (uint32_t)&CF_coeff_SMF;
+  pSMFs[16] = (uint32_t)&IMU_settings_SMF;
+  pSMFs[17] = (uint32_t)&IMU_CALIB_XACCEL_Offset_SMF;
+  pSMFs[18] = (uint32_t)&IMU_CALIB_YACCEL_Offset_SMF;
+  pSMFs[19] = (uint32_t)&IMU_CALIB_ZACCEL_Offset_SMF;
+  pSMFs[20] = (uint32_t)&IMU_CALIB_XGYRO_Offset_SMF;
+  pSMFs[21] = (uint32_t)&IMU_CALIB_YGYRO_Offset_SMF;
+  pSMFs[22] = (uint32_t)&IMU_CALIB_ZGYRO_Offset_SMF;
+  pSMFs[23] = (uint32_t)&IMU_CALIB_XGYRO_bias_drift_SMF;
+  pSMFs[24] = (uint32_t)&IMU_CALIB_YGYRO_bias_drift_SMF;
+  pSMFs[25] = (uint32_t)&IMU_CALIB_ZGYRO_bias_drift_SMF;
+  pSMFs[26] = (uint32_t)&Task_counter_SMF;
+
+//  Application specific initializations for standard message frames
+//  should be made after this section.
+
+
+  IMU_settings_SMF.IMU_settings_SMF_segments.GYRO_FS
+  = imu.sensor_configurations.sensor_configuration_segments.gyro_fs_config;
+
+  IMU_settings_SMF.IMU_settings_SMF_segments.ACCEL_FS
+  = imu.sensor_configurations.sensor_configuration_segments.accel_fs_config;
+}
+
+
+
+static void PM_push_transmit_buffer(uint8_t* buffer, uint16_t startPosition)
+{
+  PM_SMF_Transmit_Buffer[startPosition+0] = buffer[0];
+  PM_SMF_Transmit_Buffer[startPosition+1] = buffer[1];
+  PM_SMF_Transmit_Buffer[startPosition+2] = buffer[2];
+  PM_SMF_Transmit_Buffer[startPosition+3] = buffer[3];
+  PM_SMF_Transmit_Buffer[startPosition+4] = buffer[4];
+  PM_SMF_Transmit_Buffer[startPosition+5] = buffer[5];
+}
+
+void PM_SMF_Tx_Handler()
+{
+  /* Scheduler counter. */
+
+  uint32_t PM_SMF_Transmit_Event = 0;
+
+  for( int i = 0 ; i < PM_nTransmitEvents ; i++ )
+  {
+    PM_SMF_Transmit_Counter[i]++;
+
+    if(PM_SMF_Transmit_Counter[i] >= PM_SMF_Transmit_Counter_Limit[i] )
+    {
+      PM_SMF_Transmit_Counter[i] = 0;
+	  PM_SMF_Transmit_Event |= (1 << i);
+    }
+  }
+
+
+  /* Load transmit buffer. */
+
+  uint8_t buffer[6];   // Temporary buffer to frame values.
+  uint16_t position = 0;
+
+
+  /*  Transmit event 0 */
+
+  if( PM_SMF_Transmit_Event & ( 1 << 0 ) ){
+
+    SDCP_encode(&GUI_SMF,GUI_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&LED_CNTRL_SMF,LED_CNTRL_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+    }
+
+  /*  Transmit event 1 */
+
+  if( PM_SMF_Transmit_Event & ( 1 << 1 ) ){
+
+    SDCP_encode(&IMU_X_Raw_SMF,IMU_X_Raw_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&IMU_Y_Raw_SMF,IMU_Y_Raw_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&IMU_Z_Raw_SMF,IMU_Z_Raw_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&IMU_XACCEL_Processed_SMF,IMU_XACCEL_Processed_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&IMU_YACCEL_Processed_SMF,IMU_YACCEL_Processed_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&IMU_ZACCEL_Processed_SMF,IMU_ZACCEL_Processed_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&IMU_XGYRO_Processed_SMF,IMU_XGYRO_Processed_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&IMU_YGYRO_Processed_SMF,IMU_YGYRO_Processed_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&IMU_ZGYRO_Processed_SMF,IMU_ZGYRO_Processed_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+    }
+
+  /*  Transmit event 2 */
+
+  if( PM_SMF_Transmit_Event & ( 1 << 2 ) ){
+
+    SDCP_encode(&IMU_Temp_SMF,IMU_Temp_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+    }
+
+  /*  Transmit event 4 */
+
+  if( PM_SMF_Transmit_Event & ( 1 << 4 ) ){
+
+    SDCP_encode(&Roll_SMF,Roll_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&Pitch_SMF,Pitch_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+
+
+    SDCP_encode(&Yaw_SMF,Yaw_FID,0,buffer);
+    PM_push_transmit_buffer(buffer,position);
+    position += 6;
+    }
+
+  PM_SMF_Transmit_Event = 0;
+
+  UART_DMA_Transmit((uint8_t*)PM_SMF_Transmit_Buffer, position);
+}
+
+
+void PM_Rx_Handler()
+{
+  uint8_t buffer[6] = {1,1,1,1,1,1};
+
+  uint8_t queueStatus = 0;
+
+  queueStatus = SDCP_RXDQ(buffer);
+
+  /* Check for 6-byte 0 synchronization frame. */
+
+  if(    !buffer[0] && !buffer[1] && !buffer[2]
+      && !buffer[3] && !buffer[4] && !buffer[5] && queueStatus )
+  {
+    buffer[0] = 255; buffer[1] = 255; buffer[2] = 255;
+    buffer[3] = 255; buffer[4] = 255; buffer[5] = 255;
+
+    while(!UART.UART_parameters.DMA_Tx_completed);
+    UART_DMA_Transmit(buffer,6);
+    while(!UART.UART_parameters.DMA_Tx_completed);
+    return;
+  }
+
+  /* Standard message frames have frame IDs from 1 to 240. */
+
+  if( buffer[0] < 248 )
+  {
+	 PM_SMF_Rx_Handler(buffer);
+  }
+
+  if( ( buffer[0] == 248 ) || (buffer[0] == 249) )
+  {
+	  PM_FTOR_Handler(buffer);
+  }
+}
+
+void PM_SMF_Rx_Handler(uint8_t* buffer)
+{
+  /* Verify checksum of received message frame. */
+
+  if( verifyChecksum(buffer) )
+  {
+	/* Case for handling LED update events. */
+
+	if( ( buffer[0] & 127 ) == LED_CNTRL_FID )
+	{
+	  /* Decode the given message frame. */
+
+	   SDCP_decode(buffer,LED_CNTRL_FID,&LED_CNTRL_SMF);
+	   asm("NOP");
+
+	   /* If LED over-riding is enabled, discard the values written via MCU
+	    * and update from the communication stack. */
+
+	   if( LED_CNTRL_SMF.LED_CNTRL_SMF_segments.LED_OVRRD )
+	   {
+	     LED.LED_parameters.LED1_state = LED_CNTRL_SMF.LED_CNTRL_SMF_segments.XLED_state;
+	     LED.LED_parameters.LED2_state = LED_CNTRL_SMF.LED_CNTRL_SMF_segments.YLED_state;
+	     LED.LED_parameters.LED3_state = LED_CNTRL_SMF.LED_CNTRL_SMF_segments.ZLED_state;
+	     LED.LED_parameters.LED1_PWM_mode = LED_CNTRL_SMF.LED_CNTRL_SMF_segments.XLED_PWM_Mode;
+	     LED.LED_parameters.LED2_PWM_mode = LED_CNTRL_SMF.LED_CNTRL_SMF_segments.YLED_PWM_Mode;
+	     LED.LED_parameters.LED3_PWM_mode = LED_CNTRL_SMF.LED_CNTRL_SMF_segments.ZLED_PWM_Mode;
+	     LED.LED_parameters.LED1_duty = LED_CNTRL_SMF.LED_CNTRL_SMF_segments.XLED_Brightness;
+	     LED.LED_parameters.LED2_duty = LED_CNTRL_SMF.LED_CNTRL_SMF_segments.YLED_Brightness;
+	     LED.LED_parameters.LED3_duty = LED_CNTRL_SMF.LED_CNTRL_SMF_segments.ZLED_Brightness;
+	   }
+
+	   //LED_Update();
+
+	}  /* End LED_CNTRL SMF handler. */
+
+
+	/* Case for handling IMU control commands. */
+
+	if( ( buffer[0] & 127 ) == IMU_settings_FID )
+	{
+		/* Store current values in the message frame. */
+
+		uint32_t __temp = IMU_settings_SMF.all;
+
+		/* Decode the message frame contents. */
+
+		SDCP_decode(buffer,IMU_settings_FID,&IMU_settings_SMF);
+
+		/* If the write accelerometer configuration bit is enabled. */
+
+		if(IMU_settings_SMF.IMU_settings_SMF_segments.write_accel_config)
+		{
+			imu.sensor_configurations.sensor_configuration_segments.accel_fs_config =
+		    IMU_settings_SMF.IMU_settings_SMF_segments.ACCEL_FS;
+
+			IMU_settings_SMF.IMU_settings_SMF_segments.write_accel_config = 0;
+
+			/* Clear configuration bits. */
+
+			__temp &= ~( ( ( 1UL << ACCEL_FS_BLEN ) - 1 ) << ACCEL_FS_SBIT );
+
+			/* Update accelerometer full-scale configuration bits. */
+
+			__temp |= ( (uint32_t)IMU_settings_SMF.IMU_settings_SMF_segments.ACCEL_FS << ACCEL_FS_SBIT );
+		}
+
+		/* If the write gyroscope configuration bit is enabled. */
+
+		if(IMU_settings_SMF.IMU_settings_SMF_segments.write_gyro_config)
+		{
+			imu.sensor_configurations.sensor_configuration_segments.gyro_fs_config =
+		    IMU_settings_SMF.IMU_settings_SMF_segments.GYRO_FS;
+
+			IMU_settings_SMF.IMU_settings_SMF_segments.write_gyro_config = 0;
+
+			/* Clear configuration bits. */
+
+			__temp &= ~( ( ( 1UL << GYRO_FS_BLEN ) - 1 ) << GYRO_FS_SBIT );
+
+			/* Update gyroscope full-scale configuration bits. */
+
+			__temp |= ( (uint32_t)IMU_settings_SMF.IMU_settings_SMF_segments.GYRO_FS << GYRO_FS_SBIT );
+		}
+
+		/* If calibration bit is set, perform calibration. */
+
+		if(IMU_settings_SMF.IMU_settings_SMF_segments.Calibrate_CS)
+		{
+			__disable_irq();
+			MPU6050_calibrate(Z_Positive,100);
+			__enable_irq();
+			IMU_settings_SMF.IMU_settings_SMF_segments.Calibrate_CS = 0;
+		}
+
+		if(IMU_settings_SMF.IMU_settings_SMF_segments.write_ryp_accel_config)
+		{
+			Motion_Processing.output_config.output_config_segments.RPY_accel_output_enabled =
+			IMU_settings_SMF.IMU_settings_SMF_segments.write_ryp_accel_config;
+		}
+
+		if(IMU_settings_SMF.IMU_settings_SMF_segments.write_ryp_gyro_config)
+		{
+			Motion_Processing.output_config.output_config_segments.RPY_gyro_output_enabled =
+			IMU_settings_SMF.IMU_settings_SMF_segments.write_ryp_gyro_config;
+		}
+
+		if(IMU_settings_SMF.IMU_settings_SMF_segments.write_ryp_filter_config)
+		{
+			Motion_Processing.output_config.output_config_segments.RPY_filter_output_enabled =
+			IMU_settings_SMF.IMU_settings_SMF_segments.write_ryp_filter_config;
+		}
+
+		/* Clear all write configuration bits. */
+
+		__temp &= ~( 1UL << write_accel_config_SBIT );
+		__temp &= ~( 1UL << write_gyro_config_SBIT );
+		__temp &= ~( 1UL << write_rpy_accel_config_SBIT );
+		__temp &= ~( 1UL << write_rpy_gyro_config_SBIT );
+		__temp &= ~( 1UL << write_rpy_filter_config_SBIT );
+
+		IMU_settings_SMF.all = __temp;
+
+	}/* END: IMU_settings handler. */
+
+
+	/* Handler for complementary filter coefficients. */
+
+	if( (buffer[0] & 127) == CF_coeff_FID )
+	{
+		SDCP_decode(buffer,CF_coeff_FID,&CF_coeff_SMF);
+
+		SDCP_Param tempParameter;
+
+		tempParameter.bitLength = Roll_coeff_BLEN;
+		tempParameter.dataType  = Roll_coeff_DTYPE;
+		tempParameter.factor    = Roll_coeff_FACTOR;
+		tempParameter.offset    = Roll_coeff_OFFSET;
+		tempParameter.pFrame    = &CF_coeff_SMF;
+		tempParameter.startBit  = Roll_coeff_SBIT;
+
+		SDCP_RPF(&tempParameter);
+		Motion_Processing.roll_coeff = tempParameter.value;
+
+		tempParameter.bitLength = Pitch_coeff_BLEN;
+		tempParameter.dataType  = Pitch_coeff_DTYPE;
+		tempParameter.factor    = Pitch_coeff_FACTOR;
+		tempParameter.offset    = Pitch_coeff_OFFSET;
+		tempParameter.pFrame    = &CF_coeff_SMF;
+		tempParameter.startBit  = Pitch_coeff_SBIT;
+
+		SDCP_RPF(&tempParameter);
+		Motion_Processing.pitch_coeff = tempParameter.value;
+
+		tempParameter.bitLength = Yaw_coeff_BLEN;
+		tempParameter.dataType  = Yaw_coeff_DTYPE;
+		tempParameter.factor    = Yaw_coeff_FACTOR;
+		tempParameter.offset    = Yaw_coeff_OFFSET;
+		tempParameter.pFrame    = &CF_coeff_SMF;
+		tempParameter.startBit  = Yaw_coeff_SBIT;
+
+		SDCP_RPF(&tempParameter);
+		Motion_Processing.yaw_coeff = tempParameter.value;
+
+	}/* END: CF_coeff SMF handler. */
+
+
+	/* Handler for configuration read, write. */
+
+	if( ( buffer[0] & 127 ) == Config_RW_FID )
+	{
+	  SDCP_decode(buffer,Config_RW_FID,&Config_RW_SMF);
+
+	  if(Config_RW_SMF.Config_RW_SMF_segments.save_config)
+	  {
+		  __disable_irq();
+
+		  /* Save accelerometer offset values. */
+
+		  Config.IMU_accel_offset[0] = imu.accelerometer_offset[0];
+		  Config.IMU_accel_offset[1] = imu.accelerometer_offset[1];
+		  Config.IMU_accel_offset[2] = imu.accelerometer_offset[2];
+
+		  /* Save gyroscope offset values. */
+
+		  Config.IMU_gyro_offset[0] = imu.gyroscope_offset[0];
+		  Config.IMU_gyro_offset[1] = imu.gyroscope_offset[1];
+		  Config.IMU_gyro_offset[2] = imu.gyroscope_offset[2];
+
+		  /* Save complementary filter roll,pitch and yaw coefficients. */
+
+		  Config.roll_coeff = Motion_Processing.roll_coeff;
+		  Config.pitch_coeff = Motion_Processing.pitch_coeff;
+		  Config.yaw_coeff = Motion_Processing.yaw_coeff;
+
+		  /* Save accelerometer and gyroscope full-scale ranges. */
+
+		  Config.IMU_settings.IMU_settings_parameters.accel_fs =
+		  imu.sensor_configurations.sensor_configuration_segments.accel_fs_config;
+
+		  Config.IMU_settings.IMU_settings_parameters.gyro_fs =
+		  imu.sensor_configurations.sensor_configuration_segments.gyro_fs_config;
+
+		  Config.IMU_settings.IMU_settings_parameters.enable_RPY_accel =
+		  Motion_Processing.output_config.output_config_segments.RPY_accel_output_enabled;
+
+		  Config.IMU_settings.IMU_settings_parameters.enable_RPY_gyro =
+		  Motion_Processing.output_config.output_config_segments.RPY_gyro_output_enabled;
+
+		  Config.IMU_settings.IMU_settings_parameters.enable_RPY_comp =
+		  Motion_Processing.output_config.output_config_segments.RPY_filter_output_enabled;
+
+		  /* Write configurations. */
+
+		  Config_write();
+
+		  __enable_irq();
+	  }
+	}
+
+  }
+}
+
+
+void PM_FTOR_Handler(uint8_t* buffer)
+{
+  /* Case for FTOR1 message frame. */
+
+  if( buffer[0] == 248 )
+  {
+	uint8_t txBuffer[6];
+	uint8_t rxBuffer[6];
+
+	/* Get request field data. */
+
+    FTOR1.all = ( ( (uint32_t)buffer[1] << 24 )
+    						   | ( (uint32_t)buffer[2] << 16 )
+							   | ( (uint32_t)buffer[3] << 8 )
+							   | ( (uint32_t)buffer[4] << 0 ) );
+
+    /* Clear the RQST bit and set the ACK bit. */
+
+    FTOR1.FTOR1_segments.REQ = 0;
+    FTOR1.FTOR1_segments.ACK = 1;
+
+    txBuffer[0] = 248;
+    txBuffer[1] = ((FTOR1.all >> 24) & 0xFF);
+    txBuffer[2] = ((FTOR1.all >> 16) & 0xFF);
+    txBuffer[3] = ((FTOR1.all >> 8) & 0xFF);
+    txBuffer[4] = ((FTOR1.all >> 0) & 0xFF);
+    txBuffer[5] = obtainChecksum(txBuffer);
+
+    /* Wait for current DMA transfer to complete and then proceed
+     * forward to send ACK frame. */
+
+    while(!UART.UART_parameters.DMA_Tx_completed);
+    UART_DMA_Transmit(txBuffer,6);
+    while(!UART.UART_parameters.DMA_Tx_completed);
+
+
+    uint8_t bytesToTransmit[42] = {0};  // 42 bytes allocates since maximum of
+    							  // 7 frames can be transmitted on
+    							  // request.
+
+    uint8_t numberOfFrameRequests = FTOR1.FTOR1_segments.NF;
+
+    /* Load the frame IDs to transmit. */
+
+    uint8_t frame_ID[7];
+
+    frame_ID[0] = FTOR1.FTOR1_segments.FID_0;
+    frame_ID[1] = FTOR1.FTOR1_segments.FID_1;
+    frame_ID[2] = FTOR1.FTOR1_segments.FID_2;
+    frame_ID[3] = FTOR2.FTOR2_segments.FID_3;
+    frame_ID[4] = FTOR2.FTOR2_segments.FID_4;
+    frame_ID[5] = FTOR2.FTOR2_segments.FID_5;
+    frame_ID[6] = FTOR2.FTOR2_segments.FID_6;
+
+    /* Fill in buffer to transmit. */
+
+    int index = -1;
+    uint8_t tempBuffer[6];
+    uint16_t pointerToBuffer = 0;
+
+    for(int i = 0 ; i < numberOfFrameRequests ; i++ )
+    {
+      /* Search for structure corresponding to current frame ID.*/
+
+      for(int j = 0 ; j < PM_nFrames ; j++ )
+      {
+        if( PM_FIDs[j] == frame_ID[i] )
+        {
+        	index = j;
+        }
+      }
+
+      /* If the frame is found, proceed. */
+
+      if( index != -1 )
+      {
+        SDCP_encode( (void*)pSMFs[index], PM_FIDs[index], 0, tempBuffer);
+
+        bytesToTransmit[pointerToBuffer+0] = tempBuffer[0];
+        bytesToTransmit[pointerToBuffer+1] = tempBuffer[1];
+        bytesToTransmit[pointerToBuffer+2] = tempBuffer[2];
+        bytesToTransmit[pointerToBuffer+3] = tempBuffer[3];
+        bytesToTransmit[pointerToBuffer+4] = tempBuffer[4];
+        bytesToTransmit[pointerToBuffer+5] = tempBuffer[5];
+
+        pointerToBuffer += 6;
+      }
+    }
+
+    //while(!UART.UART_parameters.DMA_Tx_completed);
+    UART_DMA_Transmit(bytesToTransmit,6*numberOfFrameRequests);
+    while(!UART.UART_parameters.DMA_Tx_completed);
+  }
+  else if( buffer[0] == 249 )
+  {
+    /* FTOR2 handler. */
+
+	FTOR2.all = ( ( (uint32_t)buffer[1] << 24 )
+	    					   | ( (uint32_t)buffer[2] << 16 )
+							   | ( (uint32_t)buffer[3] << 8 )
+							   | ( (uint32_t)buffer[4] << 0 ) );
+  }
+
+  return;
+}
+
+void Protocol_Manager()
+{
+	/* First, handle the received messages. */
+
+	PM_Rx_Handler();
+
+	/* Proceed to transmit messages. */
+
+	PM_SMF_Tx_Handler();
+}

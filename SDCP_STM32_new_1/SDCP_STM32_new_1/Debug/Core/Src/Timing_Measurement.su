@@ -1,0 +1,13 @@
+core_cm4.h:1688:22:__NVIC_EnableIRQ	16	static
+core_cm4.h:1724:22:__NVIC_DisableIRQ	16	static,ignoring_inline_asm
+core_cm4.h:1816:22:__NVIC_SetPriority	16	static
+Timing_Measurement.c:4:6:Ticks_setTicks	16	static,ignoring_inline_asm
+Timing_Measurement.c:142:10:Ticks_getTicks	4	static
+Timing_Measurement.c:150:10:Ticks_getDeltaTick	16	static
+Timing_Measurement.c:164:10:Ticks_startCapture	4	static
+Timing_Measurement.c:173:10:Ticks_stopCapture	4	static
+Timing_Measurement.c:180:10:Ticks_TicksToUs	24	static
+Timing_Measurement.c:233:6:Ticks_enableInterrupt	8	static
+Timing_Measurement.c:251:6:Ticks_disableInterrupt	8	static
+Timing_Measurement.c:270:6:TIM4_IRQHandler	8	static
+Timing_Measurement.c:289:6:Tick_Handler	8	static

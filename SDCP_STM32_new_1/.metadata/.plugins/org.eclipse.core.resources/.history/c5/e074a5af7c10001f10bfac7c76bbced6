@@ -1,0 +1,239 @@
+
+#include "Motion_Processing.h"
+
+
+
+/******************	HELPER FUNCTIONS.  ************************************************/
+
+
+/* Helper functions to write values into comm. frame. */
+
+static void writeToFrame_filterCoeff(float rollCoeff, float pitchCoeff, float yawCoeff)
+{
+  SDCP_Param parameter = {0};
+
+  parameter.pFrame    = &CF_coeff_SMF;
+  parameter.bitLength = Roll_coeff_BLEN;
+  parameter.startBit  = Roll_coeff_SBIT;
+  parameter.dataType  = Roll_coeff_DTYPE;
+  parameter.factor    = Roll_coeff_FACTOR;
+  parameter.offset    = Roll_coeff_OFFSET;
+  parameter.value     = rollCoeff;
+
+  SDCP_WPF(&parameter);
+
+  parameter.pFrame    = &CF_coeff_SMF;
+  parameter.bitLength = Pitch_coeff_BLEN;
+  parameter.startBit  = Pitch_coeff_SBIT;
+  parameter.dataType  = Pitch_coeff_DTYPE;
+  parameter.factor    = Pitch_coeff_FACTOR;
+  parameter.offset    = Pitch_coeff_OFFSET;
+  parameter.value     = pitchCoeff;
+
+  SDCP_WPF(&parameter);
+
+  parameter.pFrame    = &CF_coeff_SMF;
+  parameter.bitLength = Yaw_coeff_BLEN;
+  parameter.startBit  = Yaw_coeff_SBIT;
+  parameter.dataType  = Yaw_coeff_DTYPE;
+  parameter.factor    = Yaw_coeff_FACTOR;
+  parameter.offset    = Yaw_coeff_OFFSET;
+  parameter.value     = yawCoeff;
+
+  SDCP_WPF(&parameter);
+}
+
+
+static void writeToFrame_Roll(float accelRoll, float gyroRoll, float filterRoll)
+{
+  SDCP_Param parameter = {0};
+
+  parameter.pFrame     =  &Roll_SMF;
+  parameter.value      =  accelRoll;
+  parameter.dataType   =  Roll_Accel_DTYPE;
+  parameter.startBit   =  Roll_Accel_SBIT;
+  parameter.bitLength  =  Roll_Accel_BLEN;
+  parameter.factor     =  Roll_Accel_FACTOR;
+  parameter.offset     =  Roll_Accel_OFFSET;
+
+  SDCP_WPF(&parameter);
+
+  parameter.pFrame     =  &Roll_SMF;
+  parameter.value      =  gyroRoll;
+  parameter.dataType   =  Roll_Gyro_DTYPE;
+  parameter.startBit   =  Roll_Gyro_SBIT;
+  parameter.bitLength  =  Roll_Gyro_BLEN;
+  parameter.factor     =  Roll_Gyro_FACTOR;
+  parameter.offset     =  Roll_Gyro_OFFSET;
+
+  SDCP_WPF(&parameter);
+
+  parameter.pFrame     =  &Roll_SMF;
+  parameter.value      =  filterRoll;
+  parameter.dataType   =  Roll_CF_DTYPE;
+  parameter.startBit   =  Roll_CF_SBIT;
+  parameter.bitLength  =  Roll_CF_BLEN;
+  parameter.factor     =  Roll_CF_FACTOR;
+  parameter.offset     =  Roll_CF_OFFSET;
+
+  SDCP_WPF(&parameter);
+}
+
+
+static void writeToFrame_Pitch(float accelPitch, float gyroPitch, float filterPitch)
+{
+  SDCP_Param parameter = {0};
+
+  parameter.pFrame     =  &Pitch_SMF;
+  parameter.value      =  accelPitch;
+  parameter.dataType   =  Pitch_Accel_DTYPE;
+  parameter.startBit   =  Pitch_Accel_SBIT;
+  parameter.bitLength  =  Pitch_Accel_BLEN;
+  parameter.factor     =  Pitch_Accel_FACTOR;
+  parameter.offset     =  Pitch_Accel_OFFSET;
+
+  SDCP_WPF(&parameter);
+
+  parameter.pFrame     =  &Pitch_SMF;
+  parameter.value      =  gyroPitch;
+  parameter.dataType   =  Pitch_Gyro_DTYPE;
+  parameter.startBit   =  Pitch_Gyro_SBIT;
+  parameter.bitLength  =  Pitch_Gyro_BLEN;
+  parameter.factor     =  Pitch_Gyro_FACTOR;
+  parameter.offset     =  Pitch_Gyro_OFFSET;
+
+  SDCP_WPF(&parameter);
+
+  parameter.pFrame     =  &Pitch_SMF;
+  parameter.value      =  filterPitch;
+  parameter.dataType   =  Pitch_CF_DTYPE;
+  parameter.startBit   =  Pitch_CF_SBIT;
+  parameter.bitLength  =  Pitch_CF_BLEN;
+  parameter.factor     =  Pitch_CF_FACTOR;
+  parameter.offset     =  Pitch_CF_OFFSET;
+
+  SDCP_WPF(&parameter);
+}
+
+static void writeToFrame_Yaw(float accelYaw, float gyroYaw, float filterYaw)
+{
+  SDCP_Param parameter = {0};
+
+  parameter.pFrame     =  &Yaw_SMF;
+  parameter.value      =  accelYaw;
+  parameter.dataType   =  Yaw_Accel_DTYPE;
+  parameter.startBit   =  Yaw_Accel_SBIT;
+  parameter.bitLength  =  Yaw_Accel_BLEN;
+  parameter.factor     =  Yaw_Accel_FACTOR;
+  parameter.offset     =  Yaw_Accel_OFFSET;
+
+  SDCP_WPF(&parameter);
+
+  parameter.pFrame     =  &Yaw_SMF;
+  parameter.value      =  gyroYaw;
+  parameter.dataType   =  Yaw_Gyro_DTYPE;
+  parameter.startBit   =  Yaw_Gyro_SBIT;
+  parameter.bitLength  =  Yaw_Gyro_BLEN;
+  parameter.factor     =  Yaw_Gyro_FACTOR;
+  parameter.offset     =  Yaw_Gyro_OFFSET;
+
+  SDCP_WPF(&parameter);
+
+  parameter.pFrame     =  &Yaw_SMF;
+  parameter.value      =  filterYaw;
+  parameter.dataType   =  Yaw_CF_DTYPE;
+  parameter.startBit   =  Yaw_CF_SBIT;
+  parameter.bitLength  =  Yaw_CF_BLEN;
+  parameter.factor     =  Yaw_CF_FACTOR;
+  parameter.offset     =  Yaw_CF_OFFSET;
+
+  SDCP_WPF(&parameter);
+}
+
+/***************************	MAIN FUNCTIONS.	************************************/
+
+
+/* Function to initialize the motion processing function. */
+
+void MP_Init()
+{
+  /* Load roll, pitch and yaw settings from FLASH memory. */
+
+  Motion_Processing.roll_coeff  = Config.roll_coeff;
+  Motion_Processing.pitch_coeff = Config.pitch_coeff;
+  Motion_Processing.yaw_coeff   = Config.yaw_coeff;
+
+  /* Load initial configurations into message frame. */
+
+  CF_coeff_SMF.CF_coeff_SMF_segments.Roll_coeff =
+  Config.roll_coeff;
+  CF_coeff_SMF.CF_coeff_SMF_segments.Pitch_coeff =
+  Config.pitch_coeff;
+  CF_coeff_SMF.CF_coeff_SMF_segments.Yaw_coeff =
+  Config.yaw_coeff;
+
+  /* Clear all previously stored values. */
+
+  Motion_Processing.filter_roll  = 0.0f;
+  Motion_Processing.filter_pitch = 0.0f;
+  Motion_Processing.filter_yaw	 = 0.0f;
+
+  Motion_Processing.gyro_roll   = 0.0f;
+  Motion_Processing.gyro_pitch  = 0.0f;
+  Motion_Processing.gyro_yaw    = 0.0f;
+
+  Motion_Processing.accel_roll  = 0.0f;
+  Motion_Processing.accel_pitch = 0.0f;
+  Motion_Processing.accel_yaw   = 0.0f;
+
+  /* Write settigns to frame. */
+
+  writeToFrame_filterCoeff( Motion_Processing.roll_coeff,
+		                    Motion_Processing.pitch_coeff,
+							Motion_Processing.yaw_coeff );
+
+  writeToFrame_Roll( Motion_Processing.accel_roll,
+		             Motion_Processing.gyro_roll,
+					 Motion_Processing.filter_roll );
+
+  writeToFrame_Pitch( Motion_Processing.accel_pitch,
+		              Motion_Processing.gyro_pitch,
+					  Motion_Processing.filter_pitch );
+
+  writeToFrame_Yaw(  Motion_Processing.accel_yaw,
+		             Motion_Processing.gyro_yaw,
+					 Motion_Processing.filter_yaw );
+}
+
+
+void MP_Update()
+{
+  float temp = 0.0f;
+
+  /* Update roll, pitch and yaw values based on gyroscop value. */
+
+  temp = ( (imu.gyroscope[X]/1000.0f) * MP_SAMPLE_TIME_MS );
+  Motion_Processing.gyro_roll += temp;
+
+  temp = ( (imu.gyroscope[Y]/1000.0f) * MP_SAMPLE_TIME_MS );
+  Motion_Processing.gyro_pitch += temp;
+
+  temp = ( (imu.gyroscope[Z]/1000.0f) * MP_SAMPLE_TIME_MS );
+  Motion_Processing.gyro_yaw += temp;
+
+
+  /* Write updated values to frame. */
+
+  writeToFrame_Roll( Motion_Processing.accel_roll,
+		             Motion_Processing.gyro_roll,
+					 Motion_Processing.filter_roll );
+
+  writeToFrame_Pitch( Motion_Processing.accel_pitch,
+		              Motion_Processing.gyro_pitch,
+					  Motion_Processing.filter_pitch );
+
+  writeToFrame_Yaw(  Motion_Processing.accel_yaw,
+		             Motion_Processing.gyro_yaw,
+					 Motion_Processing.filter_yaw );
+}
+

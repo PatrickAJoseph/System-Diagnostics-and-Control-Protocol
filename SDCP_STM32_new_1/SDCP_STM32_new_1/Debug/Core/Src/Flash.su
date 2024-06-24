@@ -1,0 +1,10 @@
+Flash.c:4:25:Flash_Unlock	4	static,ignoring_inline_asm
+Flash.c:33:25:Flash_Lock	4	static,ignoring_inline_asm
+Flash.c:53:25:Flash_State	4	static
+Flash.c:59:25:Flash_Sector_Erase	4	static,ignoring_inline_asm
+Flash.c:109:25:Flash_writeByte	16	static,ignoring_inline_asm
+Flash.c:171:25:Flash_writeString	32	static
+Flash.c:194:25:Flash_writeHalfWord	16	static,ignoring_inline_asm
+Flash.c:247:25:Flash_writeWord	16	static,ignoring_inline_asm
+Flash.c:301:25:Flash_write	32	static
+Flash.c:327:25:Flash_read	32	static

@@ -1,0 +1,45 @@
+
+#include "Application.h"
+
+int main(void)
+{
+  /* Device peripheral initializations. */
+
+  __disable_irq();
+
+  System_ClockInit();
+
+  Ticks_setTicks(Ticks_10ms);
+  Ticks_enableInterrupt();
+
+  UART_Init();
+
+  /* External devices initializations. */
+
+  Nokia5110_Init();
+  RotaryEncoder_Init();
+  MPU6050_Init();
+  LED_Init();
+
+  EHW_RotaryEncoder_Test_Init();
+  EHW_IMU_Test_Init();
+
+  Config_read();
+  //Config_writeFirmwareInfo("MPBRD_v0.01");
+  //Config_write();
+
+  PM_Init();
+
+  __enable_irq();
+
+  while (1)
+  {
+	if( Tick_IF )
+	{
+	  PM_SMF_Transmit();
+	  Tick_IF = 0;
+	}
+	//System_SysTick_delay_ms(500);
+  }
+
+}

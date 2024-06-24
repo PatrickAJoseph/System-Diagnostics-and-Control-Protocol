@@ -1,0 +1,2 @@
+Task_Manager.c:10:6:TM_addTask	24	static
+Task_Manager.c:23:6:TM_dispatcher	16	static

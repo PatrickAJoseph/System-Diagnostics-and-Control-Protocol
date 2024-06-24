@@ -1,0 +1,6 @@
+Motion_Processing.c:11:13:writeToFrame_filterCoeff	56	static
+Motion_Processing.c:47:13:writeToFrame_Roll	56	static
+Motion_Processing.c:83:13:writeToFrame_Pitch	56	static
+Motion_Processing.c:118:13:writeToFrame_Yaw	56	static
+Motion_Processing.c:158:6:MP_Init	8	static
+Motion_Processing.c:243:6:MP_Update	56	static

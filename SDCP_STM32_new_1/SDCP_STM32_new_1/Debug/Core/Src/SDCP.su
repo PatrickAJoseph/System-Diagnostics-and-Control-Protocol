@@ -1,0 +1,11 @@
+SDCP.c:14:6:SDCP_encode	32	static
+SDCP.c:39:9:SDCP_decode	32	static
+SDCP.c:64:9:SDCP_checkCKSUM	24	static
+SDCP.c:74:9:SDCP_TXNQ	24	static
+SDCP.c:176:9:SDCP_TXDQ	16	static
+SDCP.c:228:9:SDCP_RXNQ	24	static
+SDCP.c:330:9:SDCP_RXDQ	16	static
+SDCP.c:380:6:SDCP_BTR_FSM_update	16	static,ignoring_inline_asm
+SDCP.c:432:6:SDCP_WPF	64	static
+SDCP.c:544:6:SDCP_RPF	64	static
+SDCP.c:618:6:SDCP_BTR_push	24	static

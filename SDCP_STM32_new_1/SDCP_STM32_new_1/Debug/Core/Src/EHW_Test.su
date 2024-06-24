@@ -1,0 +1,4 @@
+EHW_Test.c:7:6:EHW_RotaryEncoder_Test_Init	16	static
+EHW_Test.c:27:6:EHW_RotaryEncoder_Test	8	static
+EHW_Test.c:75:6:EHW_IMU_Test_Init	4	static
+EHW_Test.c:82:6:EHW_IMU_Test	16	static

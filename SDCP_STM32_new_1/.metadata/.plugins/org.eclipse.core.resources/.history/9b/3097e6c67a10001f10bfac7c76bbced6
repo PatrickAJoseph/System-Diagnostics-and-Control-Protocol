@@ -1,0 +1,39 @@
+
+#include "Configurations.h"
+
+void Config_write()
+{
+  uint32_t address = (uint32_t)&Config;
+  uint32_t size    = (uint32_t)sizeof(Config);
+
+  Flash_Operation_State_t state;
+
+  state = Flash_Unlock();
+  state = Flash_write(Flash_Start,address,size);
+  state = Flash_Lock();
+}
+
+void Config_read()
+{
+  uint32_t address = (uint32_t)&Config;
+  uint32_t size    = (uint32_t)sizeof(Config);
+
+  Flash_Unlock();
+  Flash_read(Flash_Start,address,size);
+  Flash_Lock();
+}
+
+void Config_writeFirmwareInfo(char* fwVersion)
+{
+  uint8_t counter = 0;
+
+  while( *fwVersion != '\0' )
+  {
+	Config.FW_version[counter] = *fwVersion;
+    fwVersion++;
+	counter++;
+  }
+}
+
+
+

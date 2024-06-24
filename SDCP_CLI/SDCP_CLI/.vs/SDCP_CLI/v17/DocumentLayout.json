@@ -1,0 +1,85 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\Projects\\System Diagnostics and Control Protocol\\SDCP_CLI\\SDCP_CLI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{41AAB394-924C-4744-9AAC-A5CE349E5E68}|SDCP_CLI\\SDCP_CLI.csproj|e:\\projects\\system diagnostics and control protocol\\sdcp_cli\\sdcp_cli\\sdcp_cli\\cli_interface.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41AAB394-924C-4744-9AAC-A5CE349E5E68}|SDCP_CLI\\SDCP_CLI.csproj|solutionrelative:sdcp_cli\\cli_interface.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{41AAB394-924C-4744-9AAC-A5CE349E5E68}|SDCP_CLI\\SDCP_CLI.csproj|e:\\projects\\system diagnostics and control protocol\\sdcp_cli\\sdcp_cli\\sdcp_cli\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41AAB394-924C-4744-9AAC-A5CE349E5E68}|SDCP_CLI\\SDCP_CLI.csproj|solutionrelative:sdcp_cli\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{41AAB394-924C-4744-9AAC-A5CE349E5E68}|SDCP_CLI\\SDCP_CLI.csproj|e:\\projects\\system diagnostics and control protocol\\sdcp_cli\\sdcp_cli\\sdcp_cli\\sdcp_api.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41AAB394-924C-4744-9AAC-A5CE349E5E68}|SDCP_CLI\\SDCP_CLI.csproj|solutionrelative:sdcp_cli\\sdcp_api.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{41AAB394-924C-4744-9AAC-A5CE349E5E68}|SDCP_CLI\\SDCP_CLI.csproj|e:\\projects\\system diagnostics and control protocol\\sdcp_cli\\sdcp_cli\\sdcp_cli\\sdcp_cli.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{41AAB394-924C-4744-9AAC-A5CE349E5E68}|SDCP_CLI\\SDCP_CLI.csproj|solutionrelative:sdcp_cli\\sdcp_cli.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CLI_Interface.cs",
+              "DocumentMoniker": "E:\\Projects\\System Diagnostics and Control Protocol\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI\\CLI_Interface.cs",
+              "RelativeDocumentMoniker": "SDCP_CLI\\CLI_Interface.cs",
+              "ToolTip": "E:\\Projects\\System Diagnostics and Control Protocol\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI\\CLI_Interface.cs",
+              "RelativeToolTip": "SDCP_CLI\\CLI_Interface.cs",
+              "ViewState": "AQIAAKoEAAAAAAAAAAAmwLwEAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-17T18:59:41.555Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SDCP_CLI.csproj",
+              "DocumentMoniker": "E:\\Projects\\System Diagnostics and Control Protocol\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI.csproj",
+              "RelativeDocumentMoniker": "SDCP_CLI\\SDCP_CLI.csproj",
+              "ToolTip": "E:\\Projects\\System Diagnostics and Control Protocol\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI.csproj",
+              "RelativeToolTip": "SDCP_CLI\\SDCP_CLI.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-05-08T23:14:56.777Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SDCP_API.cs",
+              "DocumentMoniker": "E:\\Projects\\System Diagnostics and Control Protocol\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI\\SDCP_API.cs",
+              "RelativeDocumentMoniker": "SDCP_CLI\\SDCP_API.cs",
+              "ToolTip": "E:\\Projects\\System Diagnostics and Control Protocol\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI\\SDCP_API.cs",
+              "RelativeToolTip": "SDCP_CLI\\SDCP_API.cs",
+              "ViewState": "AQIAAIoDAAAAAAAAAAAAAJoDAAA4AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-05T03:15:38.851Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Projects\\System Diagnostics and Control Protocol\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI\\Program.cs",
+              "RelativeDocumentMoniker": "SDCP_CLI\\Program.cs",
+              "ToolTip": "E:\\Projects\\System Diagnostics and Control Protocol\\SDCP_CLI\\SDCP_CLI\\SDCP_CLI\\Program.cs",
+              "RelativeToolTip": "SDCP_CLI\\Program.cs",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAABMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-05T02:07:24.481Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

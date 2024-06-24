@@ -1,0 +1,16 @@
+MPU6050.c:8:6:I2C1_Init	4	static
+MPU6050.c:69:9:MPU6050_read_register	24	static
+MPU6050.c:152:9:I2C1_Start	24	static
+MPU6050.c:191:9:I2C1_MasterReadRequest	32	static
+MPU6050.c:228:9:I2C1_Poll_RxNE	16	static
+MPU6050.c:247:9:I2C1_Poll_BTF	16	static
+MPU6050.c:265:9:I2C1_Read	24	static
+MPU6050.c:477:9:I2C1_writeByte	32	static
+MPU6050.c:597:9:MPU6050_read_registers	24	static
+MPU6050.c:712:9:MPU6050_write_register	24	static
+MPU6050.c:781:6:MPU6050_updateConfig	16	static
+MPU6050.c:822:6:MPU6050_Init	16	static
+MPU6050.c:903:6:MPU6050_readSensorData	32	static
+MPU6050.c:1030:9:MPU6050_readAllSensorData	40	static
+MPU6050.c:1163:6:MPU6050_calibrate	48	static
+MPU6050.c:1267:6:MPU6050_errorHandler	8	static

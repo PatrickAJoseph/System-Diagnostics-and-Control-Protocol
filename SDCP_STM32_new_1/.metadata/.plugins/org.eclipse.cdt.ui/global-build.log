@@ -1,0 +1,59 @@
+22:55:25 **** Incremental Build of configuration Debug for project SDCP_STM32_new_1 ****
+make -j8 all 
+arm-none-eabi-size   SDCP_STM32_new_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  54076	    256	   3728	  58060	   e2cc	SDCP_STM32_new_1.elf
+Finished building: default.size.stdout
+ 
+22:56:09 **** Incremental Build of configuration Debug for project SDCP_STM32_new_1 ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/Protocol_Manager.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F401xE -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/Protocol_Manager.d" -MT"Core/Src/Protocol_Manager.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/Protocol_Manager.o"
+../Core/Src/Protocol_Manager.c: In function 'PM_FTOR_Handler':
+../Core/Src/Protocol_Manager.c:606:10: warning: unused variable 'rxBuffer' [-Wunused-variable]
+  uint8_t rxBuffer[6];
+          ^~~~~~~~
+arm-none-eabi-gcc -o "SDCP_STM32_new_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"E:\Projects\System Diagnostics and Control Protocol\SDCP_STM32_new_1\SDCP_STM32_new_1\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SDCP_STM32_new_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: SDCP_STM32_new_1.elf
+ 
+arm-none-eabi-objdump -h -S  SDCP_STM32_new_1.elf  > "SDCP_STM32_new_1.list"
+arm-none-eabi-objcopy  -O binary  SDCP_STM32_new_1.elf  "SDCP_STM32_new_1.bin"
+arm-none-eabi-size   SDCP_STM32_new_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  54080	    256	   3728	  58064	   e2d0	SDCP_STM32_new_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: SDCP_STM32_new_1.bin
+ 
+Finished building: SDCP_STM32_new_1.list
+ 
+22:58:17 **** Incremental Build of configuration Debug for project SDCP_STM32_new_1 ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/SDCP.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F401xE -DDEBUG -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/SDCP.d" -MT"Core/Src/SDCP.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/SDCP.o"
+arm-none-eabi-gcc -o "SDCP_STM32_new_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"E:\Projects\System Diagnostics and Control Protocol\SDCP_STM32_new_1\SDCP_STM32_new_1\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SDCP_STM32_new_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: SDCP_STM32_new_1.elf
+ 
+arm-none-eabi-objdump -h -S  SDCP_STM32_new_1.elf  > "SDCP_STM32_new_1.list"
+arm-none-eabi-objcopy  -O binary  SDCP_STM32_new_1.elf  "SDCP_STM32_new_1.bin"
+arm-none-eabi-size   SDCP_STM32_new_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  54080	    256	   3728	  58064	   e2d0	SDCP_STM32_new_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: SDCP_STM32_new_1.bin
+ 
+Finished building: SDCP_STM32_new_1.list
+ 
+20:46:50 **** Incremental Build of configuration Debug for project SDCP_STM32_new_1 ****
+make -j8 all 
+arm-none-eabi-size   SDCP_STM32_new_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  54080	    256	   3728	  58064	   e2d0	SDCP_STM32_new_1.elf
+Finished building: default.size.stdout
+ 
+21:00:30 **** Incremental Build of configuration Debug for project SDCP_STM32_new_1 ****
+make -j8 all 
+arm-none-eabi-size   SDCP_STM32_new_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  54080	    256	   3728	  58064	   e2d0	SDCP_STM32_new_1.elf
+Finished building: default.size.stdout
+ 

@@ -1,0 +1,3 @@
+Trace Start Time:  	24-06-03  06:15:42
+Trace Stop Time:   	24-06-03  06:16:00
+Number of samples:1417

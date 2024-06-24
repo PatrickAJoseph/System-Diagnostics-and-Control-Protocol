@@ -1,0 +1,14 @@
+Protocol_Manager.c:14:16:verifyChecksum	24	static
+Protocol_Manager.c:28:16:obtainChecksum	24	static
+Protocol_Manager.c:79:6:PM_setMsgFramePriority	24	static
+Protocol_Manager.c:92:17:PM_getMsgFramePriority	24	static
+Protocol_Manager.c:99:6:PM_Init	4	static
+Protocol_Manager.c:160:13:PM_push_transmit_buffer	16	static
+Protocol_Manager.c:170:6:PM_SMF_Tx_Handler	32	static
+Protocol_Manager.c:314:6:PM_Rx_Handler	16	static
+Protocol_Manager.c:365:6:PM_SMF_Rx_Handler	48	static,ignoring_inline_asm
+Protocol_Manager.c:599:6:PM_FTOR_Handler	112	static
+Protocol_Manager.c:706:6:PM_TMC_Rx_Handler	24	static
+Protocol_Manager.c:781:6:PM_BTR_Rx_Handler	32	static,ignoring_inline_asm
+Protocol_Manager.c:887:6:PM_BTR_Tx_Handler	8	static,ignoring_inline_asm
+Protocol_Manager.c:930:6:Protocol_Manager	8	static
